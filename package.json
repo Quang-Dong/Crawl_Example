@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "firebase-admin": "^9.3.0",
+    "request-promise": "^4.2.6"
+  }
+}
