@@ -10,11 +10,15 @@ const mangaRef = db.ref("Mangas");
 const chapterRef = db.ref("Chapters");
 
 const fs = require("fs"); // require thêm module filesystem
-let data = [];
+const URL = "";
+const dataType = typeof URL;
 
-request(
-  "https://mangatoon.mobi/vi/genre/comic?type=1&page=0",
-  (error, response, html) => {
+if (!URL) {
+  console.log("LỖI: Vui lòng nhập URL(dòng 13) website cần get");
+} else if (dataType !== "string") {
+  console.log("LỖI: Kiểu dữ liệu của URL(dòng 13) là số chuỗi (string)");
+} else {
+  request(URL, (error, response, html) => {
     // START - Get home
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html); // load HTML
@@ -152,5 +156,5 @@ request(
       console.log("Get home - " + error);
     }
     // END - Get home
-  }
-);
+  });
+}
