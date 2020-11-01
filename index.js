@@ -10,6 +10,8 @@ const mangaRef = db.ref("Mangas");
 const chapterRef = db.ref("Chapters");
 
 const fs = require("fs"); // require thêm module filesystem
+
+// "https://mangatoon.mobi/vi/genre/comic?type=1&page=1"
 const URL = "";
 const dataType = typeof URL;
 
@@ -29,6 +31,8 @@ if (!URL) {
         const poster = $(el).find(".content-image img").attr("src");
         const name = $(el).find(".content-image img").attr("alt");
         const id = href.slice(11); //cắt chuỗi của href để làm id
+
+        Mangas.push(id);
 
         // START - Get thông tin truyện 2
         request(`https://mangatoon.mobi${href}`, (error, response, html) => {
@@ -83,7 +87,10 @@ if (!URL) {
                   console.log("THẤT BẠI - Save Manga Info: " + id);
                 } else {
                   console.log(
-                    "THÀNH CÔNG - Save Manga Info: " + id + " / " + id.length
+                    "THÀNH CÔNG - Save Manga Info: " +
+                      id +
+                      " / " +
+                      Mangas.length
                   );
                 }
               }
@@ -109,6 +116,7 @@ if (!URL) {
             if (!error && response.statusCode == 200) {
               const $ = cheerio.load(html); // load HTML
               const Chapters = [];
+              let countChap = [];
               $(
                 "#page-content .selected-episodes .episodes-wrap .episode-item"
               ).each((index, el) => {
@@ -120,6 +128,9 @@ if (!URL) {
                   .trim();
 
                 const date = chapterDate.slice(0, 10);
+
+                const lastChap = chapterTitle.slice(8).trim();
+                countChap.push(lastChap);
 
                 //START - Upload chapter info to firebase
                 chapterRef
@@ -135,7 +146,13 @@ if (!URL) {
                       if (err) {
                         console.log("THẤT BẠI - Save Chapter Info: " + id);
                       } else {
-                        console.log("THÀNH CÔNG - Save Chapter Info: " + id);
+                        console.log(
+                          "THÀNH CÔNG - Save Chapter Info: " +
+                            "id = " +
+                            id +
+                            " / " +
+                            countChap.length
+                        );
                       }
                     }
                   );

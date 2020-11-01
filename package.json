@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node getChapter.js",
+    "start": "node index.js",
     "chapter": "node getChapter.js"
   },
   "dependencies": {
