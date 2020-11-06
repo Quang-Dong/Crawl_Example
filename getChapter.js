@@ -8,13 +8,14 @@ var db = admin.database();
 
 const chapterRef = db.ref("Chapters");
 
-const id = 0; //int, not string
+const id = 10; //int, not string
 
 const dataType = typeof id;
 
 if (!id) {
   console.log("LỖI: Vui lòng nhập ID(dòng 11) truyện cần get");
-} else if (dataType !== "int") {
+} else if (dataType !== "number") {
+  console.log("Kiểu dữ liệu bạn nhập là: " + dataType);
   console.log("LỖI: Kiểu dữ liệu của ID(dòng 11) là số nguyên (int)");
 } else {
   // START - Get thông tin chapters
@@ -35,8 +36,8 @@ if (!id) {
               .trim();
 
             const date = chapterDate.slice(0, 10).trim();
-            const lastChap = chapterTitle.slice(8).trim();
-            countChap.push(lastChap);
+            const titleChap = chapterTitle.slice(8).trim();
+            countChap.push(titleChap);
 
             //START - Upload thông tin chapter to firebase
             // chapterRef
@@ -80,12 +81,16 @@ if (!id) {
                   // START - Upload imgs của chapters to firebase
                   chapterRef
                     .child(id)
-                    .child(chapterTitle)
+                    .child(titleChap)
                     .set(
                       {
-                        imgs: ChapterImgs,
-                        dateCreadted: date,
-                        dateUpdated: date,
+                        info: {
+                          id: titleChap,
+                          dateCreadted: date,
+                          dateUpdated: date,
+                        },
+
+                        images: ChapterImgs,
                       },
                       function (err) {
                         if (err) {
@@ -94,7 +99,7 @@ if (!id) {
                         } else {
                           console.log(
                             "Save images: " +
-                              chapterTitle +
+                              titleChap +
                               " / " +
                               countChap.length
                           );

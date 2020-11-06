@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node index.js",
-    "chapter": "node getChapter.js"
+    "chapter": "node getChapter.js",
+    "cmt": "node getComments.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
