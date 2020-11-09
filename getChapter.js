@@ -8,7 +8,7 @@ var db = admin.database();
 
 const chapterRef = db.ref("Chapters");
 
-const id = 10; //int, not string
+const id = null; //int, not string
 
 const dataType = typeof id;
 

@@ -19,7 +19,7 @@ for (var i = 0; i < 10; i++) {
 }
 
 // "https://mangatoon.mobi/vi/genre/comic?type=1&page=1"
-const URL = "https://mangatoon.mobi/vi/genre/comic?type=1&page=0";
+const URL = null;
 const dataType = typeof URL;
 
 if (!URL) {

@@ -12,7 +12,7 @@ const genreRef = db.ref("GenreOfManga");
 const fs = require("fs"); // require thêm module filesystem
 
 // "https://mangatoon.mobi/vi/genre/comic?type=1&page=1"
-const URL = "https://mangatoon.mobi/vi/genre/comic?type=1&page=0";
+const URL = null;
 const dataType = typeof URL;
 
 if (!URL) {
@@ -71,55 +71,62 @@ if (!URL) {
             $(elBottom)
               .find(".description-tag .tag")
               .each((index, el) => {
-                const genre = $(el).text().trim();
+                //get genre from html
+                const genre = $(el).text().toLowerCase().trim();
                 genreList.push(genre);
+
+                //START - Upload genre to firebase
+                genreRef
+                  .child(id)
+                  .child(genre)
+                  .set(genre)
+                  .catch((err) => {
+                    if (err) {
+                      console.log("THẤT BẠI - Save Genre Info: " + id);
+                    } else {
+                      console.log(
+                        "THÀNH CÔNG - Save Genre Info: " +
+                          id +
+                          " / " +
+                          Mangas.length
+                      );
+                    }
+                  });
+                //END - Upload genre to firebase
+                //START - Upload genre to firebase
+                mangaRef
+                  .child(id)
+                  .child(genre)
+                  .set(genre)
+                  .catch((err) => {
+                    if (err) {
+                      console.log("THẤT BẠI - Save Genre Info: " + id);
+                    } else {
+                      console.log(
+                        "THÀNH CÔNG - Save Genre Info: " +
+                          id +
+                          " / " +
+                          Mangas.length
+                      );
+                    }
+                  });
+                //END - Upload genre to firebase
               });
 
-            //START - Get current time
-            var today = new Date();
-
-            var date =
-              today.getFullYear() +
-              "/" +
-              (today.getMonth() + 1) +
-              "/" +
-              today.getDate();
-            var time = today.getHours() + ":" + today.getMinutes();
-            var dateTime = date + " - " + time;
-            //END - Get current time
-
-            //START - Upload genre to firebase
-            genreRef.child(id).set(
-              {
-                genre: genreList,
-              },
-              function (err) {
-                if (err) {
-                  console.log("THẤT BẠI - Save Genre Info: " + id);
-                } else {
-                  console.log(
-                    "THÀNH CÔNG - Save Genre Info: " +
-                      id +
-                      " / " +
-                      Mangas.length
-                  );
-                }
-              }
-            );
-            //END - Upload genre to firebase
-
             //START - Upload mangas to firebase
-            mangaRef.child(id).set(
+            mangaRef.child(id).update(
               {
                 id,
                 author,
                 poster,
-                dateCreated: dateTime,
+                created: Date.now(),
+                updated: Date.now(),
                 name,
-                totalReads: quantityReads,
-                totalLikes: quantityLikes,
+                totalReads: Number(quantityReads),
+                totalLikes: Number(quantityLikes),
                 state,
                 description,
+                genre: genreList,
               },
               function (err) {
                 if (err) {
@@ -135,7 +142,6 @@ if (!URL) {
               }
             );
             //END - Upload mangas to firebase
-
             // START - Save data to disk
             //     //fs.writeFileSync("data.json", JSON.stringify(data));
             //     // fs.writeFileSync("mangas.json", JSON.stringify(Mangas));
@@ -145,66 +151,6 @@ if (!URL) {
             console.log(error);
           }
         });
-
-        // END - Get thông tin truyện 2
-
-        // //START - Get thông tin chapters
-        // request(
-        //   `https://mangatoon.mobi${href}/episodes`,
-        //   (error, response, html) => {
-        //     if (!error && response.statusCode == 200) {
-        //       const $ = cheerio.load(html); // load HTML
-        //       const Chapters = [];
-        //       let countChap = [];
-        //       $(
-        //         "#page-content .selected-episodes .episodes-wrap .episode-item"
-        //       ).each((index, el) => {
-        //         const chapterHref = $(el).attr("href");
-        //         const chapterTitle = $(el).find(".episode-title").text().trim();
-        //         const chapterDate = $(el)
-        //           .find(".episode-date > span")
-        //           .text()
-        //           .trim();
-
-        //         const date = chapterDate.slice(0, 10);
-
-        //         const lastChap = chapterTitle.slice(8).trim();
-        //         countChap.push(lastChap);
-
-        //         //START - Upload chapter info to firebase
-        //         chapterRef
-        //           .child(id)
-        //           .child(chapterTitle)
-        //           .set(
-        //             {
-        //               imgs: "",
-        //               dateCreadted: date,
-        //               dateUpdated: date,
-        //             },
-        //             function (err) {
-        //               if (err) {
-        //                 console.log("THẤT BẠI - Save Chapter Info: " + id);
-        //               } else {
-        //                 console.log(
-        //                   "THÀNH CÔNG - Save Chapter Info: " +
-        //                     "id = " +
-        //                     id +
-        //                     " / " +
-        //                     countChap.length
-        //                 );
-        //               }
-        //             }
-        //           );
-        //         //END - Upload chapter info to firebase
-
-        //         // Chapters.push({ chapterTitle, chapterHref, date });
-        //       });
-        //     } else {
-        //       console.log("Get Chapters Info - " + error);
-        //     }
-        //   }
-        // );
-        // // END - Get thông tin chapters
       });
 
       // END - Get thông tin truyện 1
