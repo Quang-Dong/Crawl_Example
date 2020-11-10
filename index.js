@@ -10,9 +10,10 @@ const mangaRef = db.ref("Mangas");
 const genreRef = db.ref("GenreOfManga");
 
 const fs = require("fs"); // require thêm module filesystem
+const { constants } = require("buffer");
 
 // "https://mangatoon.mobi/vi/genre/comic?type=1&page=1"
-const URL = null;
+const URL = "https://mangatoon.mobi/vi/genre/tags/29?type=1";
 const dataType = typeof URL;
 
 if (!URL) {
@@ -76,22 +77,22 @@ if (!URL) {
                 genreList.push(genre);
 
                 //START - Upload genre to firebase
-                genreRef
-                  .child(id)
-                  .child(genre)
-                  .set(genre)
-                  .catch((err) => {
-                    if (err) {
-                      console.log("THẤT BẠI - Save Genre Info: " + id);
-                    } else {
-                      console.log(
-                        "THÀNH CÔNG - Save Genre Info: " +
-                          id +
-                          " / " +
-                          Mangas.length
-                      );
-                    }
-                  });
+                // genreRef
+                //   .child(id)
+                //   .child(genre)
+                //   .set(genre)
+                //   .catch((err) => {
+                //     if (err) {
+                //       console.log("THẤT BẠI - Save Genre Info: " + id);
+                //     } else {
+                //       console.log(
+                //         "THÀNH CÔNG - Save Genre Info: " +
+                //           id +
+                //           " / " +
+                //           Mangas.length
+                //       );
+                //     }
+                //   });
                 //END - Upload genre to firebase
                 //START - Upload genre to firebase
                 mangaRef
@@ -112,6 +113,7 @@ if (!URL) {
                   });
                 //END - Upload genre to firebase
               });
+            // console.log(genreList.join(" "));
 
             //START - Upload mangas to firebase
             mangaRef.child(id).update(
@@ -126,7 +128,7 @@ if (!URL) {
                 totalLikes: Number(quantityLikes),
                 state,
                 description,
-                genre: genreList,
+                genres: genreList.join(", "),
               },
               function (err) {
                 if (err) {
